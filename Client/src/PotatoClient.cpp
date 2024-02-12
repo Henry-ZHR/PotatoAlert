@@ -1,21 +1,21 @@
 // Copyright 2020 <github.com/razaqq>
 
+#include "Client/PotatoClient.hpp"
+
 #include "Client/AppDirectories.hpp"
 #include "Client/Config.hpp"
 #include "Client/DatabaseManager.hpp"
 #include "Client/Game.hpp"
-#include "Client/PotatoClient.hpp"
 #include "Client/ReplayAnalyzer.hpp"
 #include "Client/ServiceProvider.hpp"
 #include "Client/StatsParser.hpp"
-
 #include "Core/Defer.hpp"
 #include "Core/Format.hpp"
 #include "Core/Json.hpp"
 #include "Core/Log.hpp"
 #include "Core/Sha256.hpp"
-#include "Core/String.hpp"
 #include "Core/StandardPaths.hpp"
+#include "Core/String.hpp"
 #include "Core/Time.hpp"
 
 #include <QNetworkReply>
@@ -198,6 +198,7 @@ void PotatoClient::SendRequest(std::string_view requestString, MatchContext&& ma
 	submitRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	submitRequest.setTransferTimeout(g_transferTimeout);
 	QNetworkReply* submitReply = m_networkAccessManager->post(submitRequest, QByteArray(requestString.data(), static_cast<int>(requestString.size())));
+	submitReply->ignoreSslErrors();
 
 	connect(submitReply, &QNetworkReply::finished, [this, submitReply, matchContext = std::move(matchContext)]()
 	{
@@ -252,8 +253,7 @@ void PotatoClient::SendRequest(std::string_view requestString, MatchContext&& ma
 
 			LookupResult(lookupUrl, Core::FromJson<std::string>(json["AuthToken"]), matchContext);
 		};
-		HandleReply(submitReply, handler);
-	});
+		HandleReply(submitReply, handler); });
 }
 
 void PotatoClient::LookupResult(const std::string& url, const std::string& authToken, const MatchContext& matchContext)
@@ -477,6 +477,8 @@ void PotatoClient::HandleReply(QNetworkReply* reply, auto& successHandler)
 			break;
 	}
 	LOG_ERROR("Server reponded with error to submit: {}", reply->errorString().toStdString());
+	LOG_ERROR("sslLibraryBuildVersionString: {}", QSslSocket::sslLibraryBuildVersionString().toStdString());
+	LOG_ERROR("sslLibraryVersionString: {}", QSslSocket::sslLibraryVersionString().toStdString());
 }
 
 // triggers a run with the current replays folders

@@ -65,28 +65,6 @@ struct StringWrap
 	}
 };
 
-template<>
-struct fmt::formatter<StringWrap, wchar_t>
-{
-	[[maybe_unused]] static constexpr auto parse(const basic_format_parse_context<wchar_t>& ctx)
-		-> basic_format_parse_context<wchar_t>::iterator
-	{
-		return ctx.begin();
-	}
-
-	auto format(const StringWrap& val, buffer_context<wchar_t>& ctx) const -> buffer_context<wchar_t>::iterator
-	{
-		if (const PotatoAlert::Core::Result<size_t> length = PotatoAlert::Core::Utf8ToWide(val.Str))
-		{
-			std::wstring wStr(length.value(), '\0');
-			if (PotatoAlert::Core::Utf8ToWide(val.Str, wStr))
-			{
-				return format_to(ctx.out(), L"{}", wStr);
-			}
-		}
-		return format_to(ctx.out(), L"<STRING-ERROR>");
-	}
-};
 
 template<>
 struct fmt::formatter<StringWrap>

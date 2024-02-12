@@ -35,17 +35,7 @@ static constexpr T UnwrapHandle(Zip::Handle handle)
 Zip Zip::Open(const fs::path& path, int compressionLevel, Mode mode)
 {
 	const zip_t* zip = nullptr;
-	if constexpr (std::is_same_v<fs::path::value_type, char>)
-	{
-		zip = zip_open(path.string().c_str(), compressionLevel, static_cast<char>(mode));
-	}
-	else
-	{
-		if (const Result<std::string> utf8Path = PathToUtf8(path))
-			zip = zip_open(utf8Path.value().c_str(), compressionLevel, static_cast<char>(mode));
-		else
-			return Zip(Handle::Null);
-	}
+	zip = zip_open(path.string().c_str(), compressionLevel, static_cast<char>(mode));
 
 	if (zip != nullptr)
 	{

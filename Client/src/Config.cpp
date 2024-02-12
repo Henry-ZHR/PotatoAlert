@@ -80,8 +80,7 @@ Config::Config(const fs::path& filePath) : m_filePath(filePath)
 	std::string gamePathStr = "";
 	if (const std::optional<fs::path> gamePath = GetGamePath())
 	{
-		if (Result<std::string> path = Core::PathToUtf8(gamePath.value()))
-			gamePathStr = path.value();
+		gamePathStr = gamePath.value();
 	}
 	g_defaultConfig.AddMember(Core::ToRef(g_keyNames[ConfigKey::GameDirectory]), gamePathStr, a);
 	g_defaultConfig.AddMember(Core::ToRef(g_keyNames[ConfigKey::Language]), 0, a);

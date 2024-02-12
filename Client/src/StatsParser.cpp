@@ -282,11 +282,11 @@ static JsonResult<void> FromJson(const rapidjson::Value& j, Ship& s)
 
 struct Player
 {
-	std::optional<Clan> Clan;
+	std::optional<_JSON::Clan> Clan;
 	bool HiddenPro;
 	std::string Name;
 	Color NameColor;
-	std::optional<Ship> Ship;
+	std::optional<_JSON::Ship> Ship;
 	Stat Battles;
 	Stat Winrate;
 	Stat AvgDmg;

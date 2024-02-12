@@ -100,22 +100,8 @@ public:
 	static bool Extract(const std::filesystem::path& file, const std::filesystem::path& dir, auto callback)
 	{
 		std::string filePath, dirPath;
-		if constexpr (std::is_same_v<std::filesystem::path::value_type, char>)
-		{
-			filePath = file.string();
-			dirPath = dir.string();
-		}
-		else
-		{
-			if (const Result<std::string> res = PathToUtf8(file))
-				filePath = res.value();
-			else
-				return false;
-			if (const Result<std::string> res = PathToUtf8(dir))
-				dirPath = res.value();
-			else
-				return false;
-		}
+		filePath = file.string();
+		dirPath = dir.string();
 		return RawExtract(filePath.c_str(), dirPath.c_str(),
 				[](const char* entry, void* ctx) -> int { return (*static_cast<decltype(callback)*>(ctx))(entry); },
 				&callback);

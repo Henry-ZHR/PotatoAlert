@@ -123,8 +123,7 @@ private:
 		if (m_json.HasMember(GetKeyName(Key).data()))
 		{
 			const std::string raw = Core::FromJson<std::string>(m_json[GetKeyName(Key).data()]);
-			if (const Result<std::filesystem::path> res = Core::Utf8ToPath(raw))
-				return res.value();
+			return Core::Utf8ToPath(raw).value();
 		}
 		return {};
 	}
@@ -152,10 +151,7 @@ private:
 	template<ConfigKey Key> requires(IsType(Key, ConfigType::Path))
 	void BaseSet(const std::filesystem::path& value)
 	{
-		if (const Result<std::string> res = Core::PathToUtf8(value))
-		{
-			m_json[GetKeyName(Key).data()].SetString(res.value(), m_json.GetAllocator());
-		}
+		m_json[GetKeyName(Key).data()].SetString(value, m_json.GetAllocator());
 	}
 
 	template<ConfigKey Key, typename T>

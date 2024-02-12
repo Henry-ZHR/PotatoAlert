@@ -57,6 +57,7 @@ if(UNIX)
         src/Encoding.linux.cpp
         src/File.linux.cpp
         src/FileMapping.linux.cpp
+        src/Process.linux.cpp
         src/Semaphore.linux.cpp
         src/Time.linux.cpp
     )

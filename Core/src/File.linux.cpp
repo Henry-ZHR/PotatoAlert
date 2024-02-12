@@ -77,6 +77,11 @@ File::Handle File::RawOpen(std::string_view path, Flags flags)
 	return CreateHandle<Handle>(fd);
 }
 
+File::Handle File::RawOpen(const std::filesystem::path& path, Flags flags)
+{
+	return RawOpen(std::string_view{ path.string() }, flags);
+}
+
 void File::RawClose(Handle handle)
 {
 	if (close(UnwrapHandle<int>(handle)) == -1)
@@ -120,11 +125,11 @@ bool File::RawRead(Handle handle, std::vector<T>& out, uint64_t size, bool reset
 	}
 	return true;
 }
-template bool File::RawRead(Handle, std::vector<uint8_t>&, uint64_t, bool);
-template bool File::RawRead(Handle, std::vector<int8_t>&, uint64_t, bool);
-template bool File::RawRead(Handle, std::vector<std::byte>&, uint64_t, bool);
-template bool File::RawRead(Handle, std::vector<unsigned char>&, uint64_t, bool);
-template bool File::RawRead(Handle, std::vector<char>&, uint64_t, bool);
+// template bool File::RawRead(Handle, std::vector<uint8_t>&, uint64_t, bool);
+// template bool File::RawRead(Handle, std::vector<int8_t>&, uint64_t, bool);
+// template bool File::RawRead(Handle, std::vector<std::byte>&, uint64_t, bool);
+// template bool File::RawRead(Handle, std::vector<unsigned char>&, uint64_t, bool);
+// template bool File::RawRead(Handle, std::vector<char>&, uint64_t, bool);
 
 template<is_byte T>
 bool File::RawReadAll(Handle handle, std::vector<T>& out, bool resetFilePointer)
@@ -149,11 +154,11 @@ bool File::RawReadAll(Handle handle, std::vector<T>& out, bool resetFilePointer)
 	}
 	return true;
 }
-template bool File::RawReadAll(Handle, std::vector<uint8_t>&, bool);
-template bool File::RawReadAll(Handle, std::vector<int8_t>&, bool);
-template bool File::RawReadAll(Handle, std::vector<std::byte>&, bool);
+// template bool File::RawReadAll(Handle, std::vector<uint8_t>&, bool);
+// template bool File::RawReadAll(Handle, std::vector<int8_t>&, bool);
+// template bool File::RawReadAll(Handle, std::vector<std::byte>&, bool);
 template bool File::RawReadAll(Handle, std::vector<unsigned char>&, bool);
-template bool File::RawReadAll(Handle, std::vector<char>&, bool);
+// template bool File::RawReadAll(Handle, std::vector<char>&, bool);
 
 bool File::RawReadString(Handle handle, std::string& out, uint64_t size, bool resetFilePointer)
 {
@@ -236,11 +241,11 @@ bool File::RawWrite(Handle handle, std::span<const T> data, bool resetFilePointe
 
 	return true;
 }
-template bool File::RawWrite(Handle, std::span<const uint8_t>, bool);
-template bool File::RawWrite(Handle, std::span<const int8_t>, bool);
-template bool File::RawWrite(Handle, std::span<const std::byte>, bool);
+// template bool File::RawWrite(Handle, std::span<const uint8_t>, bool);
+// template bool File::RawWrite(Handle, std::span<const int8_t>, bool);
+// template bool File::RawWrite(Handle, std::span<const std::byte>, bool);
 template bool File::RawWrite(Handle, std::span<const unsigned char>, bool);
-template bool File::RawWrite(Handle, std::span<const char>, bool);
+// template bool File::RawWrite(Handle, std::span<const char>, bool);
 
 bool File::RawWriteString(Handle handle, std::string_view data, bool resetFilePointer)
 {
@@ -363,7 +368,7 @@ std::string File::RawLastError()
 	}
 }
 
-bool File::GetVersion(std::string_view fileName, Version& outVersion)
+bool File::GetVersion(const std::filesystem::path& filePath, Version& outVersion)
 {
 	// TODO:: this might not exist, but you can get the sha1 build id
 	return false;
@@ -392,6 +397,11 @@ bool File::RawDelete(std::string_view file)
 bool File::RawExists(std::string_view file)
 {
 	return access(file.data(), F_OK) != -1;
+}
+
+bool File::RawExists(const std::filesystem::path& file)
+{
+	return RawExists(std::string_view{ file.string() });
 }
 
 bool File::RawMoveFilePointer(Handle handle, int64_t offset, FilePointerMoveMethod method)

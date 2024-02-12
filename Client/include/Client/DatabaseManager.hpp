@@ -32,7 +32,7 @@ namespace PotatoAlert::Client {
 	X(std::string, Json, TEXT)               \
 	X(std::string, ArenaInfo, TEXT)          \
 	X(bool, Analyzed, INTEGER DEFAULT FALSE) \
-	X(ReplaySummary, ReplaySummary, TEXT)
+	X(::ReplaySummary, ReplaySummary, TEXT)
 
 #define DECL_STRUCT(Type, Name, SqlType) Type Name;
 
